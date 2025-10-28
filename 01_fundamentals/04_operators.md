@@ -38,7 +38,7 @@ print(mission_name)  # Output: Apollo 11
 
 ### `TypeError`
 
-The `+` operator cannot be used to combine two different data types. This will cause a `TypeError`, a runtime error that occurs when an operation is performed on an inappropriate type.
+The `+` operator cannot be used to combine two different data types. This will cause **type error**, a runtime error that occurs when an operation is performed on a value of the wrong type. When this happens, the interpreter stops and displays a `TypeError`.
 
 ```python
 # This code will fail

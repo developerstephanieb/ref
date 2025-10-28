@@ -115,7 +115,7 @@ has_rings = False
 
 ## Methods
 
-A **method** is an action that Python can perform on a piece of data. It is called using **dot notation**, which means writing the variable’s name, followed by a dot (`.`), the method’s name, and parentheses `()`.
+A **method** is an action that Python can perform on a piece of data. It is called using **dot notation**, which means writing the variable’s name, followed by a dot (`.`), the method’s name, and parentheses `()`. Every method is followed by a set of parentheses, because methods often need additional information to do their work. That information is provided inside the parentheses.
 
 ### The `.title()` Method
 

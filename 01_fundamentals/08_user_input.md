@@ -33,13 +33,11 @@ print("Welcome, " + name + "!")
 
 ---
 
-## Type Errors
+## `input()` Always Returns a String
 
-The `input()` function always returns the user's input as a string, even if they type in numbers.
+The `input()` function always returns the user's input as a string, even if they type in numbers. 
 
-A **type error** occurs when an operation is performed on a value of the wrong type. When this happens, the interpreter stops and displays a `TypeError`.
-
-### Mixing Strings and Integers (`TypeError`)
+Attempting to perform mathematical operations on the result of `input()` directly will cause a `TypeError`.
 
 ```python
 # This code will cause an error

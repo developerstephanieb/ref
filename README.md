@@ -1,4 +1,4 @@
-# Python Reference
+# Python
 
 A structured collection of Python concepts, syntax, libraries, and best practices.
 

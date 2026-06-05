@@ -1,16 +1,69 @@
-venv/
-env/
-.venv/
-.env/
-
-.DS_Store
-
-.vscode/
-.history
-
+# ==========================================
+# CPython / Bytecode
+# ==========================================
 __pycache__/
 *.py[cod]
 *$py.class
 
-notes/
-main.py
+# ==========================================
+# Environments & Dependency Management
+# ==========================================
+# Ignore virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Note: Do NOT ignore uv.lock or poetry.lock. 
+
+# ==========================================
+# Environment Variables & Secrets
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# Testing & Code Coverage
+# ==========================================
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# ==========================================
+# Static Analysis, Linting, & Formatting
+# ==========================================
+.mypy_cache/
+.ruff_cache/
+
+# ==========================================
+# Build & Distribution Artifacts
+# ==========================================
+build/
+dist/
+*.egg-info/
+*.egg
+
+# ==========================================
+# IDEs & Editor Artifacts
+# ==========================================
+.vscode/
+.idea/
+.history/
+*.swp
+*.swo
+
+# ==========================================
+# OS & File System Artifacts
+# ==========================================
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# Local / Personal Project Artifacts
+# ==========================================
+_drafts/
+00_getting_started/

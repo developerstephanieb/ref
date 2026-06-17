@@ -1,4 +1,4 @@
-# Float Behavior
+# Float
 
 Why Python floats misbehave, how to work around it, and the special-value
 traps (`nan`, `inf`) that show up in interviews and production alike.
@@ -259,7 +259,7 @@ math.isclose(0.1 + 0.2, 0.3)        # True
 ```
 
 **Gotcha near zero.** When one argument is `0.0`, the relative test reduces to
-$|x| \le \text{rel\_tol} \times |x|$, which is `False` for every nonzero `x`. Pass an
+$|x| \le \text{rel tol} \times |x|$, which is `False` for every nonzero `x`. Pass an
 **absolute** tolerance (`abs_tol`) whenever a side may be zero:
 
 ```python
@@ -274,7 +274,7 @@ math.isclose(0.0, 1e-10, abs_tol=1e-9)  # True
 if and only if the **absolute difference** $|a - b|$ is within the larger of the
 relative and absolute tolerances:
 
-$$|a - b| \le \max\!\left(\text{rel\_tol} \times \max(|a|, |b|),\ \text{abs\_tol}\right)$$
+$$|a - b| \le \max\!\left(\text{rel tol} \times \max(|a|, |b|),\ \text{abs tol}\right)$$
 
 **Relative tolerance** (`rel_tol`, default $10^{-9}$ — one billionth) is a multiplier that
 scales with the inputs: it permits a wider absolute difference for numbers in the millions
@@ -609,7 +609,7 @@ to balance the identity — which is why `%` carries the sign of the divisor. (T
 | Surprise                                                | Why it happens                                                                                                                                                     | Fix                                                                                                               |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
 | `0.1 + 0.2 == 0.3` is `False`                           | `0.1`, `0.2`, and `0.3` have denominators that are not powers of 2, so each is rounded to the nearest double and the two errors do not cancel to the stored `0.3`. | Compare computed floats with `math.isclose`, not `==`.                                                            |
-| `math.isclose(0.0, x)` is `False` for every nonzero `x` | The relative buffer is $\text{rel\_tol} \times \lvert x \rvert$, which is smaller than $\lvert x \rvert$ itself.                                                   | Pass an `abs_tol` when either side can be zero, e.g. `math.isclose(0.0, x, abs_tol=1e-9)`.                        |
+| `math.isclose(0.0, x)` is `False` for every nonzero `x` | The relative buffer is $\text{rel tol} \times \lvert x \rvert$, which is smaller than $\lvert x \rvert$ itself.                                                    | Pass an `abs_tol` when either side can be zero, e.g. `math.isclose(0.0, x, abs_tol=1e-9)`.                        |
 | `Decimal(0.1)` is not `0.1`                             | The `float` `0.1` already carries binary error, and building a `Decimal` from it copies that error.                                                                | Construct from a string: `Decimal("0.1")`.                                                                        |
 | `round(2.675, 2)` is `2.67`, not `2.68`                 | `2.675` is stored just below the midpoint, so it is not a tie and rounds down.                                                                                     | Round a `Decimal("2.675")` for true base-10 rounding.                                                             |
 | `nan` breaks `==`, `in`, `sorted()`, and `max()`        | `nan` is self-unequal and unordered, and containers match by identity before `==`.                                                                                 | Detect with `math.isnan`; do not use `==`, `in`, or identity, and screen out `nan` before sorting.                |
@@ -657,4 +657,4 @@ to balance the identity — which is why `%` carries the sign of the divisor. (T
 | `rel_tol` | `1e-9`  | relative tolerance, scaled by $\max(\lvert a \rvert, \lvert b \rvert)$ (symmetric) |
 | `abs_tol` | `0.0`   | absolute floor; required when either argument may be `0.0`                         |
 
-Test applied: $|a - b| \le \max(\text{rel\_tol} \times \max(|a|, |b|),\ \text{abs\_tol})$.
+Test applied: $|a - b| \le \max(\text{rel tol} \times \max(|a|, b|),\ \text{abs tol})$.

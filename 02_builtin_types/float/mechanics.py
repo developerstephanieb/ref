@@ -90,10 +90,8 @@ def representation() -> None:
     assert (
         str(exact(0.1)) == "0.1000000000000000055511151231257827021181583404541015625"
     )
-    assert str(
-        exact(0.2)) == "0.200000000000000011102230246251565404236316680908203125"
-    assert str(
-        exact(0.3)) == "0.299999999999999988897769753748434595763683319091796875"
+    assert str(exact(0.2)) == "0.200000000000000011102230246251565404236316680908203125"
+    assert str(exact(0.3)) == "0.299999999999999988897769753748434595763683319091796875"
     # stored 0.1 is slightly LARGER than 1/10
     assert exact(0.1) > Decimal("0.1")
 
@@ -113,10 +111,8 @@ def representation() -> None:
     lower, upper = rounding_interval(0.1)
     claim("rounding_interval(0.1) lower", str(lower))
     claim("rounding_interval(0.1) upper", str(upper))
-    assert str(
-        lower) == "0.099999999999999998612221219218554324470460414886474609375"
-    assert str(
-        upper) == "0.100000000000000012490009027033011079765856266021728515625"
+    assert str(lower) == "0.099999999999999998612221219218554324470460414886474609375"
+    assert str(upper) == "0.100000000000000012490009027033011079765856266021728515625"
 
     # A ULP is the spacing to the next double (math.ulp). It is constant between
     # consecutive powers of two and doubles at each power-of-two boundary.
@@ -135,8 +131,7 @@ def comparing() -> None:
     # Default abs_tol is 0.0 and the relative buffer collapses against zero.
     claim("math.isclose(0.0, 1e-10)", math.isclose(0.0, 1e-10))
     claim(
-        "math.isclose(0.0, 1e-10, abs_tol=1e-9)", math.isclose(0.0,
-                                                               1e-10, abs_tol=1e-9)
+        "math.isclose(0.0, 1e-10, abs_tol=1e-9)", math.isclose(0.0, 1e-10, abs_tol=1e-9)
     )
     assert not math.isclose(0.0, 1e-10)
     assert math.isclose(0.0, 1e-10, abs_tol=1e-9)
@@ -199,8 +194,7 @@ def rounding() -> None:
     # 2.675 is NOT a tie: it is stored just below the midpoint, so it rounds down.
     claim("exact(2.675)", str(exact(2.675)))
     claim("round(2.675, 2)", round(2.675, 2))
-    assert str(
-        exact(2.675)) == "2.67499999999999982236431605997495353221893310546875"
+    assert str(exact(2.675)) == "2.67499999999999982236431605997495353221893310546875"
     assert round(2.675, 2) == 2.67
 
     # Decimal on the true value gives the human answer with explicit rounding.
@@ -230,10 +224,8 @@ def special_values() -> None:
 
     # Identity beats value: containers test `is` before `==`.
     claim("nan in [nan]  (same object)", nan in [nan])
-    claim("float('nan') in [float('nan')]  (distinct)",
-          float("nan") in [float("nan")])
-    claim("len({float('nan'), float('nan')})",
-          len({float("nan"), float("nan")}))
+    claim("float('nan') in [float('nan')]  (distinct)", float("nan") in [float("nan")])
+    claim("len({float('nan'), float('nan')})", len({float("nan"), float("nan")}))
     assert nan in [nan]
     assert float("nan") not in [float("nan")]
     assert len({float("nan"), float("nan")}) == 2
@@ -376,8 +368,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    to_run = [SECTIONS[args.section]
-              ] if args.section else list(SECTIONS.values())
+    to_run = [SECTIONS[args.section]] if args.section else list(SECTIONS.values())
     for func in to_run:
         func()
     print("float_behavior: all assertions hold")

@@ -87,12 +87,11 @@ def representation() -> None:
     claim("exact(0.2)", str(exact(0.2)))
     claim("exact(0.1 + 0.2)", str(exact(0.1 + 0.2)))
     claim("exact(0.3)", str(exact(0.3)))
-    assert str(
-        exact(0.1)) == "0.1000000000000000055511151231257827021181583404541015625"
-    assert str(
-        exact(0.2)) == "0.200000000000000011102230246251565404236316680908203125"
-    assert str(
-        exact(0.3)) == "0.299999999999999988897769753748434595763683319091796875"
+    assert (
+        str(exact(0.1)) == "0.1000000000000000055511151231257827021181583404541015625"
+    )
+    assert str(exact(0.2)) == "0.200000000000000011102230246251565404236316680908203125"
+    assert str(exact(0.3)) == "0.299999999999999988897769753748434595763683319091796875"
     # stored 0.1 is slightly LARGER than 1/10
     assert exact(0.1) > Decimal("0.1")
 
@@ -112,10 +111,8 @@ def representation() -> None:
     lower, upper = rounding_interval(0.1)
     claim("rounding_interval(0.1) lower", str(lower))
     claim("rounding_interval(0.1) upper", str(upper))
-    assert str(
-        lower) == "0.099999999999999998612221219218554324470460414886474609375"
-    assert str(
-        upper) == "0.100000000000000012490009027033011079765856266021728515625"
+    assert str(lower) == "0.099999999999999998612221219218554324470460414886474609375"
+    assert str(upper) == "0.100000000000000012490009027033011079765856266021728515625"
 
     # A ULP is the spacing to the next double (math.ulp). It is constant between
     # consecutive powers of two and doubles at each power-of-two boundary.
@@ -133,14 +130,17 @@ def comparing() -> None:
 
     # Default abs_tol is 0.0 and the relative buffer collapses against zero.
     claim("math.isclose(0.0, 1e-10)", math.isclose(0.0, 1e-10))
-    claim("math.isclose(0.0, 1e-10, abs_tol=1e-9)",
-          math.isclose(0.0, 1e-10, abs_tol=1e-9))
+    claim(
+        "math.isclose(0.0, 1e-10, abs_tol=1e-9)", math.isclose(0.0, 1e-10, abs_tol=1e-9)
+    )
     assert not math.isclose(0.0, 1e-10)
     assert math.isclose(0.0, 1e-10, abs_tol=1e-9)
 
     # The test is symmetric: max(|a|, |b|) means argument order never matters.
-    claim("isclose(a, b) == isclose(b, a)", math.isclose(
-        1.0, 1.0 + 1e-12) == math.isclose(1.0 + 1e-12, 1.0))
+    claim(
+        "isclose(a, b) == isclose(b, a)",
+        math.isclose(1.0, 1.0 + 1e-12) == math.isclose(1.0 + 1e-12, 1.0),
+    )
     assert math.isclose(1.0, 1.0 + 1e-12) == math.isclose(1.0 + 1e-12, 1.0)
 
 
@@ -148,10 +148,14 @@ def exactness() -> None:
     """When you need exactness: Decimal vs Fraction."""
     print("When you need exactness")
     # Decimal is exact for decimals -- but ONLY when built from a string.
-    claim('Decimal("0.1") + Decimal("0.2") == Decimal("0.3")',
-          Decimal("0.1") + Decimal("0.2") == Decimal("0.3"))
-    claim('Decimal(0.1) + Decimal(0.2) == Decimal("0.3")',
-          Decimal(0.1) + Decimal(0.2) == Decimal("0.3"))
+    claim(
+        'Decimal("0.1") + Decimal("0.2") == Decimal("0.3")',
+        Decimal("0.1") + Decimal("0.2") == Decimal("0.3"),
+    )
+    claim(
+        'Decimal(0.1) + Decimal(0.2) == Decimal("0.3")',
+        Decimal(0.1) + Decimal(0.2) == Decimal("0.3"),
+    )
     assert Decimal("0.1") + Decimal("0.2") == Decimal("0.3")
     assert Decimal(0.1) + Decimal(0.2) != Decimal("0.3")
 
@@ -162,8 +166,10 @@ def exactness() -> None:
     assert str(Decimal(1) / Decimal(3)) == "0.3333333333333333333333333333"
 
     # Fraction is exact for every rational, but denominators grow.
-    claim("Fraction(1,10) + Fraction(2,10) == Fraction(3,10)",
-          Fraction(1, 10) + Fraction(2, 10) == Fraction(3, 10))
+    claim(
+        "Fraction(1,10) + Fraction(2,10) == Fraction(3,10)",
+        Fraction(1, 10) + Fraction(2, 10) == Fraction(3, 10),
+    )
     chained = sum((Fraction(1, n) for n in range(1, 11)), Fraction(0))
     claim("sum(1/1 .. 1/10) as Fraction", chained)
     assert Fraction(1, 10) + Fraction(2, 10) == Fraction(3, 10)
@@ -188,15 +194,17 @@ def rounding() -> None:
     # 2.675 is NOT a tie: it is stored just below the midpoint, so it rounds down.
     claim("exact(2.675)", str(exact(2.675)))
     claim("round(2.675, 2)", round(2.675, 2))
-    assert str(
-        exact(2.675)) == "2.67499999999999982236431605997495353221893310546875"
+    assert str(exact(2.675)) == "2.67499999999999982236431605997495353221893310546875"
     assert round(2.675, 2) == 2.67
 
     # Decimal on the true value gives the human answer with explicit rounding.
-    claim('Decimal("2.675").quantize(.01, ROUND_HALF_UP)',
-          str(Decimal("2.675").quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)))
-    assert Decimal("2.675").quantize(Decimal("0.01"),
-                                     rounding=ROUND_HALF_UP) == Decimal("2.68")
+    claim(
+        'Decimal("2.675").quantize(.01, ROUND_HALF_UP)',
+        str(Decimal("2.675").quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+    )
+    assert Decimal("2.675").quantize(
+        Decimal("0.01"), rounding=ROUND_HALF_UP
+    ) == Decimal("2.68")
 
 
 def special_values() -> None:
@@ -216,10 +224,8 @@ def special_values() -> None:
 
     # Identity beats value: containers test `is` before `==`.
     claim("nan in [nan]  (same object)", nan in [nan])
-    claim("float('nan') in [float('nan')]  (distinct)",
-          float("nan") in [float("nan")])
-    claim("len({float('nan'), float('nan')})",
-          len({float("nan"), float("nan")}))
+    claim("float('nan') in [float('nan')]  (distinct)", float("nan") in [float("nan")])
+    claim("len({float('nan'), float('nan')})", len({float("nan"), float("nan")}))
     assert nan in [nan]
     assert float("nan") not in [float("nan")]
     assert len({float("nan"), float("nan")}) == 2
@@ -256,8 +262,10 @@ def special_values() -> None:
         raise AssertionError("0 / 0 did not raise")
 
     # Overflow is non-uniform: ** and many math funcs raise, arithmetic gives inf.
-    for label, thunk in [("2.0 ** 2000", lambda: 2.0**2000),
-                         ("math.exp(1000)", lambda: math.exp(1000))]:
+    for label, thunk in [
+        ("2.0 ** 2000", lambda: 2.0**2000),
+        ("math.exp(1000)", lambda: math.exp(1000)),
+    ]:
         try:
             thunk()
         except OverflowError:
@@ -360,8 +368,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    to_run = [SECTIONS[args.section]
-              ] if args.section else list(SECTIONS.values())
+    to_run = [SECTIONS[args.section]] if args.section else list(SECTIONS.values())
     for func in to_run:
         func()
     print("float_behavior: all assertions hold")

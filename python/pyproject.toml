@@ -1,0 +1,12 @@
+# ── ref/python/pyproject.toml ────────────────────────────────────────────────
+
+[project]
+name = "ref-python"
+version = "0.1.0"
+description = "Python language & CPython internals — reference."
+requires-python = ">=3.13"
+dependencies = []
+
+[tool.uv]
+# Not an installable library — a collection of runnable topic scripts. Don't build it.
+package = false

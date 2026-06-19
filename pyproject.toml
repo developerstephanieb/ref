@@ -1,12 +1,26 @@
+# ── ref/pyproject.toml ───────────────────────────────────────────────────────
+# Virtual workspace root: a container that coordinates members, not a real package.
+
 [project]
-name = "ref-py"
+# Name must NOT collide with any member (members are ref-python / ref-dsa /
+# ref-cs-fundamentals), or `uv sync` errors with a duplicate-member name.
+name = "ref-workspace"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "Reference workspace: ref/python, ref/dsa, ref/cs_fundamentals (packages) + ref/sdlc (docs)."
 requires-python = ">=3.13"
 dependencies = []
 
+[tool.uv]
+# Don't build or install the root itself.
+package = false
+
+[tool.uv.workspace]
+# sdlc is intentionally absent — it's prose/diagrams, not a Python package.
+members = ["python", "dsa", "cs_fundamentals"]
+
 [dependency-groups]
+# Shared dev tooling for the whole workspace (PEP 735). One `uv sync` installs it
+# for every member; uv reads tool config from the root and shares it across members.
 dev = [
     "pytest>=9.1.0",
     "ruff>=0.15.17",

@@ -1,12 +1,10 @@
 # ref-python
 
-> A verification-first reference for Python's behavior and internals — where every claim is proven 
-> by runnable code rather than asserted from memory.
+> A verification-first reference for Python's behavior and internals — where every claim is proven by runnable, assert-backed code.
 
 [![CI](https://github.com/developerstephanieb/ref-python/actions/workflows/ci.yml/badge.svg)](https://github.com/developerstephanieb/ref-python/actions/workflows/ci.yml)
 
-Each topic is a quick technical reference, a set of collapsible deep dives that build the "why", 
-an executable proof of every claim, and spaced-repetition cards for retention.
+Each topic is a quick technical reference, a set of collapsible deep dives that build the "why", an executable proof of every claim, and spaced-repetition cards for retention.
 
 ## How it's organized
 

@@ -1,0 +1,12 @@
+# ── ref/python/pyproject.toml ────────────────────────────────────────────────
+
+[project]
+name = "ref-cs-fundamentals"
+version = "0.1.0"
+description = "Hardware/theory fundamentals below the algorithm layer — reference."
+requires-python = ">=3.13"
+dependencies = []
+
+[tool.uv]
+# Not an installable library — a collection of runnable topic scripts. Don't build it.
+package = false

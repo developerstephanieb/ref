@@ -1,29 +1,34 @@
+# ── ref/.github/workflows/ci.yml ─────────────────────────────────────────────
+# Unchanged from your single-package version: it already runs from the repo root
+# over `.`, and at the workspace root `uv sync --locked` resolves every member
+# from the one shared lockfile while ruff/pytest cover the whole tree.
+
 name: CI
 
 on:
-    push:
-        branches: [main]
-    pull_request:
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v6
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
 
-            - name: Install uv
-              uses: astral-sh/setup-uv@v8.1.0
-              with:
-                  enable-cache: true
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
 
-            - name: Install dependencies (from the lockfile)
-              run: uv sync --locked
+      - name: Install dependencies (from the lockfile)
+        run: uv sync --locked
 
-            - name: Lint
-              run: uv run ruff check .
+      - name: Lint
+        run: uv run ruff check .
 
-            - name: Format check
-              run: uv run ruff format --check .
+      - name: Format check
+        run: uv run ruff format --check .
 
-            - name: Test
-              run: uv run pytest
+      - name: Test
+        run: uv run pytest

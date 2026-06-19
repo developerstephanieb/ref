@@ -2,6 +2,14 @@ version = 1
 revision = 3
 requires-python = ">=3.13"
 
+[manifest]
+members = [
+    "ref-cs-fundamentals",
+    "ref-dsa",
+    "ref-python",
+    "ref-workspace",
+]
+
 [[package]]
 name = "colorama"
 version = "0.4.6"
@@ -64,7 +72,22 @@ wheels = [
 ]
 
 [[package]]
-name = "ref-py"
+name = "ref-cs-fundamentals"
+version = "0.1.0"
+source = { virtual = "cs_fundamentals" }
+
+[[package]]
+name = "ref-dsa"
+version = "0.1.0"
+source = { virtual = "dsa" }
+
+[[package]]
+name = "ref-python"
+version = "0.1.0"
+source = { virtual = "python" }
+
+[[package]]
+name = "ref-workspace"
 version = "0.1.0"
 source = { virtual = "." }
 

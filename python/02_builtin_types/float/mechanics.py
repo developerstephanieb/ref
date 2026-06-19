@@ -4,8 +4,8 @@ Runnable, assert-backed demonstrations of Python float behavior, and the
 verification source of truth for README.md: every value, output, and bit
 pattern quoted in the doc is produced here by running code.
 
-    python mechanics.py                 # run every section
-    python mechanics.py --section nan   # run one section (see --help)
+    python mechanics.py                            # run every section
+    python mechanics.py --section special_values   # run one section (see --help)
 
 Each function mirrors one README section, prints a labeled claim with its
 result so the output is self-evidencing, and backs the claim with `assert`s.
@@ -70,7 +70,7 @@ def claim(label: str, value: object) -> None:
 # ---------------------------------------------------------------------------
 
 
-def representation() -> None:
+def why_inexact() -> None:
     """Why floats are imprecise: rounding to the nearest representable double."""
     print("Why floats are imprecise")
     claim("0.1 + 0.2 == 0.3", 0.1 + 0.2 == 0.3)
@@ -92,6 +92,11 @@ def representation() -> None:
     )
     assert str(exact(0.2)) == "0.200000000000000011102230246251565404236316680908203125"
     assert str(exact(0.3)) == "0.299999999999999988897769753748434595763683319091796875"
+    # The rounded sum lands on a different double than stored 0.3 (the README's
+    # side-by-side); its exact value is what `0.1 + 0.2` actually holds.
+    assert exact(0.1 + 0.2) == Decimal(
+        "0.3000000000000000444089209850062616169452667236328125"
+    )
     # stored 0.1 is slightly LARGER than 1/10
     assert exact(0.1) > Decimal("0.1")
 
@@ -122,7 +127,7 @@ def representation() -> None:
     assert ulp(2.0) == 2 * ulp(1.0)  # doubles crossing the 2**1 boundary
 
 
-def comparing() -> None:
+def comparison() -> None:
     """Comparing floats: math.isclose and the near-zero collapse."""
     print("Comparing floats")
     claim("math.isclose(0.1 + 0.2, 0.3)", math.isclose(0.1 + 0.2, 0.3))
@@ -144,7 +149,7 @@ def comparing() -> None:
     assert math.isclose(1.0, 1.0 + 1e-12) == math.isclose(1.0 + 1e-12, 1.0)
 
 
-def exactness() -> None:
+def exact_alternatives() -> None:
     """When you need exactness: Decimal vs Fraction."""
     print("When you need exactness")
     # Decimal is exact for decimals -- but ONLY when built from a string.
@@ -174,6 +179,14 @@ def exactness() -> None:
     claim("sum(1/1 .. 1/10) as Fraction", chained)
     assert Fraction(1, 10) + Fraction(2, 10) == Fraction(3, 10)
     assert chained == Fraction(7381, 2520)
+
+    # Constructor trap (mirrors Decimal): Fraction(float) imports the binary error,
+    # Fraction(str) is exact. Fraction(0.1) is the exact stored value of the double.
+    claim("Fraction(0.1)", Fraction(0.1))
+    claim('Fraction("1/10")', Fraction("1/10"))
+    assert Fraction(0.1) == Fraction(3602879701896397, 36028797018963968)
+    assert Fraction("1/10") == Fraction(1, 10)
+    assert Fraction(0.1) != Fraction("1/10")
 
     # Integer cents: holding money as whole cents in an int stays exact where the
     # float version does not.
@@ -221,6 +234,9 @@ def special_values() -> None:
     assert not (nan < 1.0) and not (nan > 1.0)
     assert not (nan <= nan) and not (nan >= 0.0)
     assert math.isnan(nan)
+    # nan/inf are ordinary float objects carrying a reserved bit pattern.
+    claim("type(float('nan')) is float", type(float("nan")) is float)
+    assert type(float("nan")) is float
 
     # Identity beats value: containers test `is` before `==`.
     claim("nan in [nan]  (same object)", nan in [nan])
@@ -240,9 +256,12 @@ def special_values() -> None:
     # inf IS ordered, and a too-large literal becomes inf silently.
     claim("inf > 1e308", inf > 1e308)
     claim("1e400 == inf", 1e400 == inf)
+    claim("sys.float_info.max", sys.float_info.max)
     assert inf == math.inf
     assert inf > 1e308 and -inf < -1e308
     assert 1e400 == inf
+    # The largest finite double; exceeding it (by arithmetic/literals) yields inf.
+    assert sys.float_info.max == 1.7976931348623157e308
 
     # Most inf arithmetic is well-defined; indeterminate forms decay to nan.
     claim("inf + 1", inf + 1)
@@ -294,7 +313,7 @@ def special_values() -> None:
     assert set(bits(nan).split()[2]) != {"0"}
 
 
-def integers_as_floats() -> None:
+def precision_limits() -> None:
     """Integers as floats: the 2**53 collapse and shared int/float keys."""
     print("Integers as floats")
     claim("2**53", 2**53)
@@ -315,7 +334,7 @@ def integers_as_floats() -> None:
     assert issubclass(int, float) is False
 
 
-def floor_division() -> None:
+def division_modulo() -> None:
     """Floor division: // floors toward -inf; % takes the sign of the divisor."""
     print("Floor division")
     claim("-7.5 // 2", -7.5 // 2)
@@ -328,7 +347,7 @@ def floor_division() -> None:
     assert -7.5 == 2 * (-7.5 // 2) + (-7.5 % 2)
 
 
-def cross_cutting() -> None:
+def gotchas() -> None:
     """Closing gotchas: accumulation error and fsum; nan-vs-sort recap."""
     print("Gotchas (cross-cutting)")
     # A manual += running total drifts; fsum is correctly rounded (exact).
@@ -348,14 +367,14 @@ def cross_cutting() -> None:
 
 
 SECTIONS = {
-    "representation": representation,
-    "comparing": comparing,
-    "exactness": exactness,
+    "why_inexact": why_inexact,
+    "comparison": comparison,
+    "exact_alternatives": exact_alternatives,
     "rounding": rounding,
-    "special": special_values,
-    "integers": integers_as_floats,
-    "floor": floor_division,
-    "gotchas": cross_cutting,
+    "special_values": special_values,
+    "precision_limits": precision_limits,
+    "division_modulo": division_modulo,
+    "gotchas": gotchas,
 }
 
 
@@ -371,7 +390,7 @@ def main() -> None:
     to_run = [SECTIONS[args.section]] if args.section else list(SECTIONS.values())
     for func in to_run:
         func()
-    print("float_behavior: all assertions hold")
+    print("float: all assertions hold")
 
 
 if __name__ == "__main__":

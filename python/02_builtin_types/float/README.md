@@ -311,6 +311,10 @@ symmetric. Its defaults are also looser: `rtol=1e-05`, `atol=1e-08` (versus stdl
 does not collapse against `0.0` the way the stdlib's does. Don't assume the two libraries
 agree on the same pair of numbers.
 
+> **Sourced, not reproduced here.** NumPy isn't a dependency of this topic, so the formula
+> and defaults above are taken from the `numpy.isclose` documentation, not asserted in
+> `mechanics.py`. Confirm against your installed NumPy version before relying on them.
+
 </details>
 
 ---
@@ -335,6 +339,14 @@ When base-10 exactness matters, step off hardware floats onto a software numeric
   Fraction(1, 10) + Fraction(2, 10) == Fraction(3, 10)   # True
   ```
 
+  It has the same constructor trap as `Decimal`: building from a `float` imports the float's
+  binary error, while a string (or integer pair) is exact:
+
+  ```python
+  Fraction(0.1)      # 3602879701896397/36028797018963968  <- the stored double, exactly
+  Fraction("1/10")   # 1/10                                  <- exact
+  ```
+
   Reach for it when you need true rational arithmetic — values like `1/3` that no finite
   decimal can hold.
 - Integer cents — for money you can often skip non-integer types entirely: store amounts as
@@ -343,10 +355,12 @@ When base-10 exactness matters, step off hardware floats onto a software numeric
 
 **The trade-off (precision vs. performance).** Both are implemented in software (the
 `decimal`/`fractions` libraries, not the hardware FPU), so they carry a real CPU and memory
-cost — often an order of magnitude or more slower than native floats. The two scale
-differently: `Decimal`'s overhead is a roughly constant factor, while
-`Fraction`'s grows with the length of the computation. Reach for these where correctness
-demands it, not by default.
+cost — commonly an order of magnitude or more slower than native floats, though the exact
+factor is workload-, input-, and version-dependent (this is a rule of thumb, not a number
+measured here). The two scale *differently*, and that part is structural rather than
+benchmarked: `Decimal`'s overhead is a roughly constant factor, while `Fraction`'s grows
+with the length of the computation because its denominators grow as operations chain
+(see the deep dive below). Reach for these where correctness demands it, not by default.
 
 <details>
 <summary><b><code>Decimal</code> vs <code>Fraction</code>: exact about different things</b></summary>
@@ -556,7 +570,9 @@ which is why large integer IDs must never be round-tripped through `float`.
 <summary><b>Why <code>{1: ..., 1.0: ...}</code> collapses to one key</b></summary>
 
 A `dict` finds a key by hash, then confirms with `==`. Python guarantees that objects which
-compare equal hash equal, and it extends this across the numeric types: `1 == 1.0` is `True`
+compare equal hash equal — the general `__eq__`/`__hash__` invariant lives in Python's data
+model (see the data-model topic for its full contract); here it simply extends across the
+numeric types: `1 == 1.0` is `True`
 and `hash(1) == hash(1.0)`. So when the interpreter builds `{1: "a", 1.0: "b"}` it hashes
 `1`, stores `"a"`, then hashes `1.0`, lands on the same bucket, finds `1.0 == 1`, and treats
 it as an update — overwriting `"a"` with `"b"`. The result is `{1: "b"}`: one key, the
@@ -657,4 +673,4 @@ to balance the identity — which is why `%` carries the sign of the divisor. (T
 | `rel_tol` | `1e-9`  | relative tolerance, scaled by $\max(\lvert a \rvert, \lvert b \rvert)$ (symmetric) |
 | `abs_tol` | `0.0`   | absolute floor; required when either argument may be `0.0`                         |
 
-Test applied: $|a - b| \le \max(\text{rel tol} \times \max(|a|, b|),\ \text{abs tol})$.
+Test applied: $|a - b| \le \max(\text{rel tol} \times \max(|a|, |b|),\ \text{abs tol})$.

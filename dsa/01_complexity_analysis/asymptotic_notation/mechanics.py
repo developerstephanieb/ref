@@ -1,7 +1,7 @@
 """asymptotic_notation — mechanics.
 
-Empirical-vs-derived demonstrations for asymptotic notation. This is the empirical 
-half: it measures the growth ratios f(n)/g(n) the README reasons about and asserts 
+Empirical-vs-derived demonstrations for asymptotic notation. This is the empirical
+half: it measures the growth ratios f(n)/g(n) the README reasons about and asserts
 that the measured trend matches the derived asymptotic class.
 
     python mechanics.py                 # run every section
@@ -75,24 +75,20 @@ def assert_trend(
     """
     pairs = list(zip(values, values[1:]))
     if kind == "to_zero":
-        assert all(
-            b < a for a, b in pairs), f"{label}: not strictly decreasing"
+        assert all(b < a for a, b in pairs), f"{label}: not strictly decreasing"
         assert values[-1] < 1e-2, f"{label}: tail {values[-1]:.3g} not near 0"
     elif kind == "to_inf":
-        assert all(
-            b > a for a, b in pairs), f"{label}: not strictly increasing"
+        assert all(b > a for a, b in pairs), f"{label}: not strictly increasing"
         assert values[-1] > values[0], f"{label}: did not grow"
     elif kind == "flat":
         lo, hi = min(values), max(values)
-        assert hi - lo <= rtol * \
-            abs(lo), f"{label}: spread {hi - lo:.3g} not flat"
+        assert hi - lo <= rtol * abs(lo), f"{label}: spread {hi - lo:.3g} not flat"
     elif kind == "to_value":
         assert target is not None, f"{label}: to_value needs a target"
         mono = all(b < a for a, b in pairs) or all(b > a for a, b in pairs)
         assert mono, f"{label}: not monotone toward {target}"
         gap = abs(values[-1] - target)
-        assert gap <= rtol * \
-            abs(target), f"{label}: tail off target by {gap:.3g}"
+        assert gap <= rtol * abs(target), f"{label}: tail off target by {gap:.3g}"
     else:  # pragma: no cover - guard against a typo in a caller
         raise ValueError(f"unknown trend kind: {kind!r}")
 
@@ -105,6 +101,7 @@ def assert_trend(
 def s1_why() -> None:
     """Asymptotics compare growth, not machine time; constants are hidden."""
     print("s1 why-asymptotics: growth class, not wall-clock")
+
     # Two implementations of the same Θ(n) work with a 1000x constant gap rank
     # the SAME asymptotically — the constant is exactly what we discard.
     def slow(n):
@@ -112,8 +109,8 @@ def s1_why() -> None:
 
     def fast(n):
         return 1.0 * n
-    ratios = growth_ratio(
-        slow, fast, [10, 1e3, 1e6, 1e9], "1000n / n (constant gap)")
+
+    ratios = growth_ratio(slow, fast, [10, 1e3, 1e6, 1e9], "1000n / n (constant gap)")
     assert_trend(ratios, "flat", label="constant factor is hidden")
     print("    -> both are Θ(n); the 1000x constant does not change the class\n")
 
@@ -121,17 +118,17 @@ def s1_why() -> None:
 def s2_big_o() -> None:
     """O is an upper bound; n₀ is why a bigger-O function can be faster small."""
     print("s2 big-o: the n₀ crossover (100n vs n²)")
+
     def f(n):  # O(n)
         return 100.0 * n
 
     def g(n):  # O(n²)
         return float(n) * n
+
     n0 = crossover(f, g, 1, 1000)
     print(f"    100n <= n² first at n={n0}")
-    print(
-        f"    n=50:  100n={f(50):g}  n²={g(50):g}  -> n² is SMALLER (faster)")
-    print(
-        f"    n=200: 100n={f(200):g}  n²={g(200):g}  -> n² is LARGER (slower)")
+    print(f"    n=50:  100n={f(50):g}  n²={g(50):g}  -> n² is SMALLER (faster)")
+    print(f"    n=200: 100n={f(200):g}  n²={g(200):g}  -> n² is LARGER (slower)")
     assert n0 == 100, "crossover of 100n and n² must be exactly n=100"
     # Below n₀ the asymptotically larger n² is the faster choice; "O(n²) beats
     # O(n)" is only a statement about large n.
@@ -142,6 +139,7 @@ def s2_big_o() -> None:
 def s3_big_omega() -> None:
     """Ω is a lower bound: f stays at or above c·g for large n."""
     print("s3 big-omega: f bounded below by c·g")
+
     # f(n) = n²/2 - 3n is Ω(n²): for n ≥ 12, f(n) >= (1/4)·n²
     # (since (1/4)n² ≥ 3n ⇔ n ≥ 12). The sample starts at that n₀.
     def f(n):
@@ -149,6 +147,7 @@ def s3_big_omega() -> None:
 
     def g(n):
         return float(n) * n
+
     ratios = growth_ratio(f, g, [12, 100, 1e3, 1e4], "f / n²  ->  c≥1/4")
     # The ratio equals 1/4 at n=12 and rises to 1/2; below n=12 it dips under
     # 1/4 (and f(6)=0), which is exactly why n₀=12, not 6.
@@ -160,13 +159,14 @@ def s3_big_omega() -> None:
 def s4_big_theta() -> None:
     """Θ sandwiches f between two constant multiples of g (both bounds proven)."""
     print("s4 big-theta: lower-order terms wash out -> Θ(n²)")
+
     def f(n):
         return 3.0 * n * n + 50.0 * n + 200.0
 
     def g(n):
         return float(n) * n
-    ratios = growth_ratio(
-        f, g, [10, 100, 1e3, 1e4, 1e5, 1e6], "(3n²+50n+200)/n²")
+
+    ratios = growth_ratio(f, g, [10, 100, 1e3, 1e4, 1e5, 1e6], "(3n²+50n+200)/n²")
     # Sandwich: for n ≥ 10 the ratio sits in [3, 11]; it converges down to 3.
     assert all(3.0 <= r <= 11.0 for r in ratios), "ratio must stay in [c1,c2]"
     assert_trend(ratios, "to_value", target=3.0, label="f = Θ(n²)")
@@ -176,12 +176,14 @@ def s4_big_theta() -> None:
 def s5_little_o_omega() -> None:
     """Strict bounds: o means the ratio goes to 0 (never tight)."""
     print("s5 little-o / little-omega: strict, via the limit")
+
     # n = o(n²): n/n² = 1/n -> 0, so the bound is never tight (unlike O).
     def f(n):
         return float(n)
 
     def g(n):
         return float(n) * n
+
     little_o = growth_ratio(f, g, [10, 100, 1e3, 1e4], "n / n²  (n = o(n²))")
     assert_trend(little_o, "to_zero", label="n = o(n²): ratio -> 0")
     # n² = ω(n): the reciprocal -> ∞.
@@ -228,6 +230,7 @@ def s6_simplification() -> None:
 def s7_composition() -> None:
     """Sequence -> add then keep max; nest -> multiply; branch -> max."""
     print("s7 composition: combine block costs")
+
     def f(n):  # an O(n) block
         return float(n)
 
@@ -346,8 +349,7 @@ def s9_case_vs_bound() -> None:
 
     n = 50
     best = insertion_sort_comparisons(list(range(n)))  # sorted: best case
-    worst = insertion_sort_comparisons(
-        list(range(n, 0, -1)))  # reversed: worst
+    worst = insertion_sort_comparisons(list(range(n, 0, -1)))  # reversed: worst
     print(f"    n={n}: best (sorted) = {best} comparisons  ~ Θ(n) = {n - 1}")
     print(f"    n={n}: worst (reversed) = {worst} comparisons  ~ Θ(n²)/2")
     # Best case is linear (n-1 comparisons); worst is the triangular n(n-1)/2.
@@ -379,8 +381,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    to_run = [SECTIONS[args.section]
-              ] if args.section else list(SECTIONS.values())
+    to_run = [SECTIONS[args.section]] if args.section else list(SECTIONS.values())
     for func in to_run:
         func()
     print("asymptotic_notation: all trends hold")

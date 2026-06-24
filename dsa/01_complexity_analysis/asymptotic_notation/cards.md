@@ -1,5 +1,5 @@
 Q: Why use asymptotic notation instead of counting exact operations or timing code?
-A: Asymptotic notation isolates the order of growth — how resource cost scales as input size $n$ increases — independent of hardware, language overhead, or constant factors. Because exact timings depend on the environment, asymptotic analysis abstracts them away to focus on intrinsic algorithmic efficiency. "Asymptotic" means the bound applies only after a crossover threshold (`n_0`), describing the trajectory as data scales to infinity (tail), not on trivially small inputs. Consequently, an asymptotically slower algorithm (like `n^2`) can strictly outperform an asymptotically superior one (like `100n`) on small datasets below `n_0`.
+A: Asymptotic notation isolates the order of growth — how resource cost scales as input size n increases — independent of hardware, language overhead, or constant factors. Because exact timings depend on the environment, asymptotic analysis abstracts them away to focus on intrinsic algorithmic efficiency. "Asymptotic" means the bound applies only after a crossover threshold (`n_0`), describing the trajectory as data scales to infinity (tail), not on trivially small inputs. Consequently, an asymptotically slower algorithm (like `n^2`) can strictly outperform an asymptotically superior one (like `100n`) on small datasets below `n_0`.
 TAGS: complexity asymptotic_notation foundations concept
 ---
 Q: Two algorithms are both Θ(n), but one does ~1000× the work per element. Same class? Equally fast?
@@ -7,11 +7,11 @@ A: Same class, not equally fast. Both scale linearly so they share the Θ(n) cla
 TAGS: complexity asymptotic_notation foundations gotcha
 ---
 Q: What is the formal definition of `f(n) = O(g(n))`?
-A: It defines an asymptotic upper bound. It dictates that f grows no faster than g, up to a constant factor. Formally: There exists constants c > 0 and n_0 > 0 such that 0 <= f(n) <= c * g(n) for all n >= n_0. The bound may be loose (e.g., n = O(n^2) is mathematically true), and the `=` sign is an accepted abuse of notation for set membership ($f \in O(g)$).
+A: It defines an asymptotic upper bound. It dictates that f grows no faster than g, up to a constant factor. Formally: There exists constants c > 0 and n_0 > 0 such that 0 <= f(n) <= c * g(n) for all n >= n_0. The bound may be loose (e.g., n = O(n^2) is mathematically true), and the `=` sign is an accepted abuse of notation for set membership (f ∈ O(g)).
 TAGS: complexity asymptotic_notation bounds concept
 ---
 Q: What is the formal definition of `f(n) = Ω(g(n))`?
-A: It defines an asymptotic lower bound, acting as the mathematical mirror to Big-O. It dictates that $f$ grows at least as fast as $g$. Formally: There exists constants c > 0 and n_0 > 0 such that 0 <= c * g(n) <= f(n) for all n >= n_0. Like Big-O, this floor can be practically loose (e.g., n^2 = Ω(n) is true).
+A: It defines an asymptotic lower bound, acting as the mathematical mirror to Big-O. It dictates that f grows at least as fast as g. Formally: There exists constants c > 0 and n_0 > 0 such that 0 <= c * g(n) <= f(n) for all n >= n_0. Like Big-O, this floor can be practically loose (e.g., n^2 = Ω(n) is true).
 TAGS: complexity asymptotic_notation bounds concept
 ---
 Q: What does `f(n) = Θ(g(n))` mean, and when may you write it?

@@ -22,6 +22,7 @@ members = ["python", "dsa", "cs_fundamentals"]
 # Shared dev tooling for the whole workspace (PEP 735). One `uv sync` installs it
 # for every member; uv reads tool config from the root and shares it across members.
 dev = [
+    "pre-commit>=4.6.0",
     "pytest>=9.1.0",
     "ruff>=0.15.17",
 ]

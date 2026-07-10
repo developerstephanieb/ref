@@ -40,7 +40,7 @@ def growth_ratio(f: Fn, g: Fn, ns: list[float], label: str) -> list[float]:
     """
     ratios = [f(n) / g(n) for n in ns]
     print(f"  {label}")
-    for n, r in zip(ns, ratios):
+    for n, r in zip(ns, ratios, strict=True):
         print(f"    n={n:<12g} ratio={r:.6g}")
     return ratios
 
@@ -73,7 +73,7 @@ def assert_trend(
       "flat"      constant within *rtol*                   (f = Θ(g), c known)
       "to_value"  monotone and converging to *target*      (f = Θ(g) via limit)
     """
-    pairs = list(zip(values, values[1:]))
+    pairs = list(zip(values, values[1:], strict=False))
     if kind == "to_zero":
         assert all(b < a for a, b in pairs), f"{label}: not strictly decreasing"
         assert values[-1] < 1e-2, f"{label}: tail {values[-1]:.3g} not near 0"
@@ -104,10 +104,10 @@ def s1_why() -> None:
 
     # Two implementations of the same Θ(n) work with a 1000x constant gap rank
     # the SAME asymptotically — the constant is exactly what we discard.
-    def slow(n):
+    def slow(n: float) -> float:
         return 1000.0 * n
 
-    def fast(n):
+    def fast(n: float) -> float:
         return 1.0 * n
 
     ratios = growth_ratio(slow, fast, [10, 1e3, 1e6, 1e9], "1000n / n (constant gap)")
@@ -119,10 +119,10 @@ def s2_big_o() -> None:
     """O is an upper bound; n₀ is why a bigger-O function can be faster small."""
     print("s2 big-o: the n₀ crossover (100n vs n²)")
 
-    def f(n):  # O(n)
+    def f(n: float) -> float:  # O(n)
         return 100.0 * n
 
-    def g(n):  # O(n²)
+    def g(n: float) -> float:  # O(n²)
         return float(n) * n
 
     n0 = crossover(f, g, 1, 1000)
@@ -142,10 +142,10 @@ def s3_big_omega() -> None:
 
     # f(n) = n²/2 - 3n is Ω(n²): for n ≥ 12, f(n) >= (1/4)·n²
     # (since (1/4)n² ≥ 3n ⇔ n ≥ 12). The sample starts at that n₀.
-    def f(n):
+    def f(n: float) -> float:
         return 0.5 * n * n - 3.0 * n
 
-    def g(n):
+    def g(n: float) -> float:
         return float(n) * n
 
     ratios = growth_ratio(f, g, [12, 100, 1e3, 1e4], "f / n²  ->  c≥1/4")
@@ -160,10 +160,10 @@ def s4_big_theta() -> None:
     """Θ sandwiches f between two constant multiples of g (both bounds proven)."""
     print("s4 big-theta: lower-order terms wash out -> Θ(n²)")
 
-    def f(n):
+    def f(n: float) -> float:
         return 3.0 * n * n + 50.0 * n + 200.0
 
-    def g(n):
+    def g(n: float) -> float:
         return float(n) * n
 
     ratios = growth_ratio(f, g, [10, 100, 1e3, 1e4, 1e5, 1e6], "(3n²+50n+200)/n²")
@@ -178,10 +178,10 @@ def s5_little_o_omega() -> None:
     print("s5 little-o / little-omega: strict, via the limit")
 
     # n = o(n²): n/n² = 1/n -> 0, so the bound is never tight (unlike O).
-    def f(n):
+    def f(n: float) -> float:
         return float(n)
 
-    def g(n):
+    def g(n: float) -> float:
         return float(n) * n
 
     little_o = growth_ratio(f, g, [10, 100, 1e3, 1e4], "n / n²  (n = o(n²))")
@@ -231,10 +231,10 @@ def s7_composition() -> None:
     """Sequence -> add then keep max; nest -> multiply; branch -> max."""
     print("s7 composition: combine block costs")
 
-    def f(n):  # an O(n) block
+    def f(n: float) -> float:  # an O(n) block
         return float(n)
 
-    def g(n):  # an O(n²) block
+    def g(n: float) -> float:  # an O(n²) block
         return float(n) * n
 
     # Sequential: total = f + g; the sum is Θ(max(f,g)) = Θ(n²).

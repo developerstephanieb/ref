@@ -21,6 +21,7 @@ import argparse
 import math
 import struct
 import sys
+from collections.abc import Callable
 from decimal import ROUND_HALF_UP, Decimal, getcontext, localcontext
 from fractions import Fraction
 
@@ -281,10 +282,11 @@ def special_values() -> None:
         raise AssertionError("0 / 0 did not raise")
 
     # Overflow is non-uniform: ** and many math funcs raise, arithmetic gives inf.
-    for label, thunk in [
+    overflow_cases: list[tuple[str, Callable[[], float]]] = [
         ("2.0 ** 2000", lambda: 2.0**2000),
         ("math.exp(1000)", lambda: math.exp(1000)),
-    ]:
+    ]
+    for label, thunk in overflow_cases:
         try:
             thunk()
         except OverflowError:
@@ -361,9 +363,8 @@ def gotchas() -> None:
     assert math.fsum([0.1] * 10) == 1.0
 
     # CPython 3.12+ also made the built-in sum() compensated for floats.
-    if sys.version_info >= (3, 12):
-        claim("sum([0.1] * 10)  (3.12+ compensated)", sum([0.1] * 10))
-        assert sum([0.1] * 10) == 1.0
+    claim("sum([0.1] * 10)  (3.12+ compensated)", sum([0.1] * 10))
+    assert sum([0.1] * 10) == 1.0
 
 
 SECTIONS = {

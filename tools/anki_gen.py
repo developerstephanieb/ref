@@ -5,10 +5,10 @@ anki_gen.py -- build one Anki-importable TSV from every cards.md in the workspac
 Each card's deck is derived from its top-level member directory, so cards file
 themselves into per-domain subdecks under a shared base deck:
 
-    python/...          -> Interview Prep::Python
-    dsa/...             -> Interview Prep::DSA
-    sdlc/...            -> Interview Prep::SDLC
-    cs_fundamentals/... -> Interview Prep::CS Fundamentals
+    python/...          -> ref::Python
+    dsa/...             -> ref::DSA
+    sdlc/...            -> ref::SDLC
+    cs_fundamentals/... -> ref::CS Fundamentals
 
 Card format (blocks separated by a line containing only `---`):
 
@@ -126,7 +126,7 @@ def main() -> None:
     parser.add_argument("--out", default=Path("build/anki.tsv"), type=Path)
     parser.add_argument(
         "--deck",
-        default="Interview Prep",
+        default="ref",
         type=str,
         help="base deck name; the member dir becomes a ::subdeck",
     )
